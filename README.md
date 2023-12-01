@@ -13,6 +13,11 @@ The Service is built up of two microservices acting as the frontend and the webh
 There are also two intermediate services that layer the responsibilities.
 (These could technically be merged but i thought it was more interesting to add more layers).
 
+Structure more visually
+
+User <->[frontend, frontend, ..] <-> message_handler <-> webhook_handler --> rabbitmq --> webhook_worker
+
+both the webhook_handler and message_handler talk to the database
 
 ## How to run
 I wanted to try to selfhost my own image registry so the images are hosted on registry.smoxboye.com
@@ -31,6 +36,8 @@ and if you're on Linux run
 To turn everything off run
 `make down`
 
+The service should now be available at
+http://localhost:3000
 
 ### To make it easy to interact with i compiled a few tools in Go.
 **(I HAVE NOT TESTED ANYTHING THAT RUNS ON LINUX)**

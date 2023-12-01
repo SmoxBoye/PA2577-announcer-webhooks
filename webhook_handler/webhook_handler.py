@@ -24,11 +24,6 @@ logging.basicConfig(
 
 log = logging.getLogger(__name__)
 
-# Establish a connection with RabbitMQ server
-connection = pika.BlockingConnection(pika.ConnectionParameters(WEBHOOK_QUEUE_URL))
-channel = connection.channel()
-channel.queue_declare(queue="webhook_queue")
-
 
 class Webhook(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -89,15 +84,23 @@ async def invoke_webhook(data: State):
     if not hooks:
         print("No webhooks found")
         return {"status": "No webhooks found"}
-
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(
+            WEBHOOK_QUEUE_URL, heartbeat=600, blocked_connection_timeout=300
+        )
+    )
+    channel = connection.channel()
+    channel.queue_declare(queue="webhook_queue")
     log.info(f"Sending {len(hooks)} webhooks to queue")
     for hook in hooks:
         url: str = hook.url
         payload = {"url": url, "state": data.state}
+        # Establish a connection with RabbitMQ server
 
         print(f"Sending {payload} to queue")
         channel.basic_publish(
             exchange="", routing_key="webhook_queue", body=json.dumps(payload)
         )
         log.info(f"Sent {url} to queue")
+    channel.close()
     return {"status": "success"}
