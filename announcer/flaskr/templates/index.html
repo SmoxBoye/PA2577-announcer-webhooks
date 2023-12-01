@@ -1,0 +1,35 @@
+<head>
+    <title>Är Expen Öppen?</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <style>
+        body{
+            {%if open%}
+                background-color: #99ff9c;
+            {%else%}
+                background-color: #ff9c99;
+            {%endif%}
+        }
+
+        h1 {
+            {%if open%}
+                color: #1f331f;
+            {%else%}
+                color: #331f1f;
+            {%endif%}
+            
+        }
+    </style>
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script async src="https://umami.ds.bthstudent.se/script.js" data-website-id="4de3bd62-2d2f-4285-a4e7-50f150e0519c"></script>
+</head>
+<body>
+    <div class = "container">
+        {%if open%}
+            <h1>Ja</h1>
+        {%else%}
+            <h1>Nej</h1>
+        {%endif%}
+    </div>
+</body>

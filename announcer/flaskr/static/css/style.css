@@ -1,0 +1,31 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 80%;
+    width: 100%;
+}
+
+h1 {
+    font-size: 85px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+footer {
+    height: 15%;
+}
+
+.bottomright {
+    opacity: 0.5;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    text-align: right;
+    font-family: Arial, Helvetica, sans-serif;
+}
