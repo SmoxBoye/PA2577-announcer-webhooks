@@ -20,7 +20,7 @@ User <->[frontend, frontend, ..] <-> message_handler <-> webhook_handler --> rab
 both the webhook_handler and message_handler talk to the database
 
 ### frontend
-The frontend contains acts as both the API and frontend. It contains no real logic. It runs as a microservice in that it can run in parallell which is then managed by a LoadBalancer.
+The frontend (announcer) contains acts as both the API and frontend. It contains no real logic. It runs as a microservice in that it can run in parallell which is then managed by a LoadBalancer.
 
 ### message_handler
 The message_handler manages the logic for the frontend. It makes the database calls and sends messages to the webhook_manager. Im quite sure this could also be run as a microservice but i decided to keep the complexity down.
