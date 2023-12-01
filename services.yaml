@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-balancer
+  labels:
+    app: announcer
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 3000
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: announcer
+
+
+
+
+
+# # message-handler
+
+# frontend-app -> message-handler
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-message-service
+  labels:
+    app: message-handler-service
+spec:
+  selector:
+    app: message-handler
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+
+# # Webhook-worker
+
+# # message-handler -> webhook-handler
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-webhook-service
+  labels:
+    app: webhook-handler-app  
+spec:
+  selector:
+    app: webhook-handler-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+
+# # RabbitMQ
+
+# # Webhook-handler <-> RabbitMQ <-> Webhook-worker
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-service
+  labels:
+    app: rabbitmq-service
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+  - protocol: TCP
+    port: 5672
+    targetPort: 5672
+
+# # Database
+
+# # message-handler <-> Database
+# # webhook-handler <-> Database
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+  labels:
+    app: postgres-service
+spec:
+  selector:
+    app: postgres
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: my-service
+# spec:
+#   type: LoadBalancer
+#   ports:
+#   - name: http
+#     port: 5432
+#     targetPort: 5432
+#     protocol: TCP
+#   selector:
+#     app: postgres

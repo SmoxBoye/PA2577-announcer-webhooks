@@ -1,0 +1,138 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: announcer-front
+  labels:
+    app: announcer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: announcer
+  template:
+    metadata:
+      labels:
+        app: announcer
+    spec:
+      containers:
+      - name: announcer-front
+        image: registry.smoxboye.com/pa2577/announcer:latest
+        imagePullPolicy: Always
+        env:
+        - name: FLASK_MESSAGE_HANDLER_URL 
+          value: frontend-message-service.default.svc.cluster.local
+        ports:
+        - containerPort: 5000
+      imagePullSecrets:
+        - name: myregistrykey
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-handler-app
+  labels:
+    app: message-handler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: message-handler
+  template:
+    metadata:
+      labels:
+        app: message-handler
+    spec:
+      containers:
+      - name: message-handler-app
+        image: registry.smoxboye.com/pa2577/message_handler
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: WEBHOOK_HANDLER_URL 
+          value: message-webhook-service.default.svc.cluster.local
+        - name: POSTGRES_URL 
+          value: db
+        - name: POSTGRES_USER 
+          value: postgres
+        - name: POSTGRES_PASSWORD 
+          value: password
+        - name: POSTGRES_DATABASE 
+          value: db  
+      imagePullSecrets:
+      - name: myregistrykey
+
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-handler
+  labels:
+    app: webhook-handler-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webhook-handler-app
+  template:
+    metadata:
+      labels:
+        app: webhook-handler-app
+    spec:
+      containers:
+      - name: webhook-handler
+        image: registry.smoxboye.com/pa2577/webhook_handler:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: WEBHOOK_QUEUE_URL 
+          value: rabbitmq-service.default.svc.cluster.local
+        - name: POSTGRES_URL 
+          value: db 
+        - name: POSTGRES_USER 
+          value: postgres
+        - name: POSTGRES_PASSWORD 
+          value: password
+        - name: POSTGRES_DATABASE 
+          value: db
+      imagePullSecrets:
+      - name: myregistrykey
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-worker
+  labels:
+    app: webhook-worker-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webhook-worker-app
+  template:
+    metadata:
+      labels:
+        app: webhook-worker-app
+    spec:
+      containers:
+      - name: webhook-worker
+        image: registry.smoxboye.com/pa2577/webhook_worker:latest
+        imagePullPolicy: Always
+        env:
+          - name: WEBHOOK_QUEUE_URL 
+            value: rabbitmq-service.default.svc.cluster.local
+      imagePullSecrets:
+      - name: myregistrykey
+        
+
+
