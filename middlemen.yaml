@@ -26,7 +26,7 @@ spec:
 
 
 
-
+# DB implementation based on: https://www.airplane.dev/blog/deploy-postgres-on-kubernetes
 ---
 apiVersion: apps/v1
 kind: Deployment
